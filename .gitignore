@@ -3,6 +3,8 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+Kaggle_Movie_Data/
+
 # C extensions
 *.so
 
