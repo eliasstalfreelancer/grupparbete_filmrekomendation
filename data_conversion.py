@@ -52,13 +52,15 @@ def create_user_profile(df, genre_columns):
     return user_profile
 
 if __name__ == "__main__":
-    #user input
+    #exampl user input
     df = pd.DataFrame({"movie": ["The Matrix", "Inception", "Interstellar","Up","Jumanji","rocky"], "year": [1999, 2010, 2014, 2009, 2019, 1976], "genre": ["Sci-Fi", "Sci-Fi", "Sci-Fi", "Animation", "Adventure", "Drama"]})
+    
     #convert genre column to binary features and create user profile
     df, genre_columns = genre_multi_label_binary(df)
     user_profile = create_user_profile(df, genre_columns)
-    #print user profile
+    
     print(user_profile)
+    
     #from print stament, the output will be:
     """Adventure    0.166667
     Animation    0.166667
