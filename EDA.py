@@ -1,8 +1,10 @@
 import pandas as pd
-import numpy as np
 import ast
 import json
+import os
+from load_data import load_data
 from collections import Counter
+
 
 def parse_json_column(column_series):
     """Omvandlar strängifierad JSON till lista med namn."""
@@ -35,10 +37,10 @@ def parse_json_column(column_series):
 def load_raw_data(data_dir='Kaggle_Movie_Data'):
     """Läser in rådata från Kaggle Movie dataset"""
     print("\n Läser in data...")
-    movies = pd.read_csv('Kaggle_Movie_Data/movies_metadata.csv', low_memory=False)
-    keywords = pd.read_csv('Kaggle_Movie_Data/keywords.csv')
-    links = pd.read_csv('Kaggle_Movie_Data/links.csv')
-    ratings = pd.read_csv('Kaggle_Movie_Data/ratings.csv')
+    movies = load_data(os.path.join(data_dir, 'movies_metadata.csv'))
+    keywords = load_data(os.path.join(data_dir, 'keywords.csv'))
+    links = load_data(os.path.join(data_dir, 'links.csv'))
+    ratings = load_data(os.path.join(data_dir, 'ratings.csv'))
     return movies, keywords, links, ratings
 
 def prepare_eda_dataframe(movies, keywords):
