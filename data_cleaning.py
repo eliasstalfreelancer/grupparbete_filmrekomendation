@@ -10,6 +10,8 @@ genrer = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary",
 def get_genres(text):
     try:
         lista = ast.literal_eval(text)
+        if not isinstance(lista, list):
+            return []
         return [g["name"] for g in lista if g["name"] in genrer]
     except Exception:
         return []
