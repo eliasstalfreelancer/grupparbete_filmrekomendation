@@ -3,6 +3,8 @@ from streamlit_searchbox import st_searchbox
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(page_title="Filmrekommendation", page_icon="🎥")
+
 @st.cache_data
 def load_clean_movies():
     df = pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
