@@ -2,11 +2,28 @@ import pandas as pd
 
 import pandas as pd
 import numpy as np
+def normalize_genres(x):
+        # Normalize genres into a list, regardless of input type.
+        # If input is a list, tuple, or set, remove extra spaces and empty values.
+        # If input is a string, split by commas and remove extra spaces.
+        # For missing or unsupported values, return an empty list.
+        if isinstance(x, (list, tuple, set)):
+            return [str(genre).strip() for genre in x if str(genre).strip()]
 
+        if isinstance(x, str):
+            return [genre.strip() for genre in x.split(",") if genre.strip()]
+
+        return []
 
 def genre_multi_label_binary(df):
     """
     Convert the genre column into binary genre features.
+    
+    Supports:
+        - ["Sci-Fi", "Drama"]
+        - "Sci-Fi"
+        - "Sci-Fi, Drama"
+
 
     Returns:
         df: DataFrame with genre columns.
@@ -17,9 +34,7 @@ def genre_multi_label_binary(df):
 
     # Convert:
     # "Action, Sci-Fi" -> ["Action", "Sci-Fi"]
-    df["genre"] = df["genre"].apply(
-        lambda x: [genre.strip() for genre in x.split(",")]
-    )
+    df["genre"] = df["genre"].apply(normalize_genres)
 
     # Find all unique genres.
     # sorted() is important so column order is always deterministic.
@@ -53,7 +68,7 @@ def create_user_profile(df, genre_columns):
 
 if __name__ == "__main__":
     #exampl user input
-    df = pd.DataFrame({"movie": ["The Matrix", "Inception", "Interstellar","Up","Jumanji","rocky"], "year": [1999, 2010, 2014, 2009, 2019, 1976], "genre": ["Sci-Fi", "Sci-Fi", "Sci-Fi", "Animation", "Adventure", "Drama"]})
+    df = pd.DataFrame({"movie": ["The Matrix", "Inception", "Interstellar","Up","Jumanji","rocky"], "year": [1999, 2010, 2014, 2009, 2019, 1976], "genre": [["Sci-Fi", "Horror"], "Sci-Fi", "Sci-Fi", "Animation", "Adventure", "Drama"]})
     
     #convert genre column to binary features and create user profile
     df, genre_columns = genre_multi_label_binary(df)
@@ -65,5 +80,6 @@ if __name__ == "__main__":
     """Adventure    0.166667
     Animation    0.166667
     Drama        0.166667
+    Horror       0.166667
     Sci-Fi       0.500000
     dtype: float64"""
