@@ -1,12 +1,15 @@
+
 import streamlit as st
 import pandas as pd
 
 @st.cache_data
 def load_clean_movies():
-    return pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
+    df = pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
+    df["genre"] = df["genres"].str.split("|")
+
+    return df
 
 movies_df = load_clean_movies()
-movie_titles = movies_df["title"].tolist()
 titles = dict(zip(movies_df["id"], movies_df["title"]))
 
 def movie_autocomplete(label, key):
@@ -16,12 +19,15 @@ def movie_autocomplete(label, key):
         st.write("Skriv minst 3 bokstäver…")
         return None
 
-    # Filtrera titlar baserat på input
+    # Filters titles based on user input
     filtered = movies_df[movies_df["title"].str.contains(user_input, case=False, na=False, regex=False)]
 
     if filtered.empty:
         st.write("Inga filmer matchar din sökning.")
         return None
+
+    elif len(set(selected_ids)) < 5:
+        st.warning("Du har valt samma film flera gånger.")
 
     return st.selectbox("Välj film", filtered["id"], format_func=lambda movie_id: titles[movie_id], key=f"{key}_select")
 
@@ -53,3 +59,6 @@ if st.button("Hämta rekommendationer"):
     else:
         selected_titles = [titles[movie_id] for movie_id in selected_ids]
         st.success(f"Du valde: {', '.join(selected_titles)}")
+
+        recommendations = baseline_recommendation(movie_df[["id", "title", "genres"]], selected_ids, n=10)
+        st.dataframe(recommendations[["title", "cosine_score"]])
