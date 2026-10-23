@@ -27,6 +27,7 @@ rpds-py==2026.9.1
 six==1.17.0
 starlette==1.8.0
 streamlit==1.66.0
+streamlit-searchbox==0.1.24
 typing_extensions==4.16.0
 tzdata==2026.5
 urllib3==2.8.0

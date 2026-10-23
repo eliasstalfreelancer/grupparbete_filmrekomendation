@@ -1,48 +1,39 @@
+from streamlit_searchbox import st_searchbox
+
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(page_title="Filmrekommendation", page_icon="🎥")
+
 @st.cache_data
 def load_clean_movies():
-    return pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
+    df = pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
+    df["genre"] = df["genres"].str.split("|")
+
+    return df
 
 movies_df = load_clean_movies()
-movie_titles = movies_df["title"].tolist()
 titles = dict(zip(movies_df["id"], movies_df["title"]))
 
-def movie_autocomplete(label, key):
-    user_input = st.text_input(label, key=f"{key}_search")
 
-    if len(user_input) < 3:
-        st.write("Skriv minst 3 bokstäver…")
-        return None
+def search_movies(search_term):
+    """
+    Returns movies that match the search term.
+    """
+    if not search_term or len(search_term) < 2:
+        return []
 
-    # Filtrera titlar baserat på input
-    filtered = movies_df[movies_df["title"].str.contains(user_input, case=False, na=False, regex=False)]
+    matches = movies_df[movies_df["title"].str.contains(search_term, case=False, na=False, regex=False)]
+    return [(row.title, row.id) for row in matches.head(20).itertuples()]
 
-    if filtered.empty:
-        st.write("Inga filmer matchar din sökning.")
-        return None
-
-    return st.selectbox("Välj film", filtered["id"], format_func=lambda movie_id: titles[movie_id], key=f"{key}_select")
 
 st.title("🎥 Filmrekommendation")
 
-col1, col2, col3, col4, col5 = st.columns(5)
-
-with col1:
-    movie1 = movie_autocomplete("Film 1", "movie1")
-
-with col2:
-    movie2 = movie_autocomplete("Film 2", "movie2")
-
-with col3:
-    movie3 = movie_autocomplete("Film 3", "movie3")
-
-with col4:
-    movie4 = movie_autocomplete("Film 4", "movie4")
-
-with col5:
-    movie5 = movie_autocomplete("Film 5", "movie5")
+movie1 = st_searchbox(search_movies, key="movie1", placeholder="Sök film")
+movie2 = st_searchbox(search_movies, key="movie2", placeholder="Sök film")
+movie3 = st_searchbox(search_movies, key="movie3", placeholder="Sök film")
+movie4 = st_searchbox(search_movies, key="movie4", placeholder="Sök film")
+movie5 = st_searchbox(search_movies, key="movie5", placeholder="Sök film")
 
 
 if st.button("Hämta rekommendationer"):
@@ -50,6 +41,12 @@ if st.button("Hämta rekommendationer"):
 
     if None in selected_ids:
         st.warning("Du måste välja alla fem filmer.")
+    elif len(set(selected_ids)) < 5:
+        st.warning("Du har valt samma film flera gånger.")
     else:
         selected_titles = [titles[movie_id] for movie_id in selected_ids]
         st.success(f"Du valde: {', '.join(selected_titles)}")
+
+#        Lägga till efter jag har importerat baseline: 
+#        recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
+#        st.dataframe(recommendations[["title", "cosine_score"]])
