@@ -79,6 +79,31 @@ def add_keywords(df, path="Kaggle_Movie_Data/keywords.csv"):
     return df
 
 
+def clean_ratings(movies):
+    ratings = load_data("Kaggle_Movie_Data/ratings_small.csv")
+    links = load_data("Kaggle_Movie_Data/links_small.csv")
+    print("Rader i ratings:", len(ratings))
+
+    # links används för att byta movieId mot tmdbId (samma som id i movies)
+    links = links.dropna(subset=["tmdbId"]).copy()
+    links["tmdbId"] = links["tmdbId"].astype(int)
+    links = links.drop_duplicates(subset="movieId")
+
+    df = ratings.merge(links[["movieId", "tmdbId"]], on="movieId")
+    df = df.rename(columns={"tmdbId": "id"})
+    print("Efter koppling med links:", len(df))
+
+    # bara filmer som finns kvar efter städningen
+    df = df[df["id"].isin(movies["id"])]
+    print("Efter filmer som finns i movies:", len(df))
+
+    df = df.drop_duplicates(subset=["userId", "id"])
+    print("Efter dubbletter:", len(df))
+
+    df = df[["userId", "id", "rating", "timestamp"]]
+    return df.reset_index(drop=True)
+
+
 if __name__ == "__main__":
     movies = clean_movies()
     movies = add_keywords(movies)
@@ -87,3 +112,8 @@ if __name__ == "__main__":
     spara["keywords"] = spara["keywords"].str.join("|")
     spara.to_csv("Kaggle_Movie_Data/movies_clean.csv", index=False)
     print(movies.head())
+
+    ratings = clean_ratings(movies)
+    ratings.to_csv("Kaggle_Movie_Data/ratings_clean.csv", index=False)
+    print("Användare:", ratings["userId"].nunique())
+    print(ratings.head())
