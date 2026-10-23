@@ -37,7 +37,7 @@ def clean_movies(path="Kaggle_Movie_Data/movies_metadata.csv"):
     df["id"] = df["id"].astype(int)
     print("Efter trasiga rader:", len(df))
 
-    df = df[["id", "title", "genres"]].copy()
+    df = df[["id", "title", "genres", "vote_average", "vote_count"]].copy()
 
     df["title"] = df["title"].str.strip()
     df = df.dropna(subset=["title"])
@@ -50,6 +50,12 @@ def clean_movies(path="Kaggle_Movie_Data/movies_metadata.csv"):
     df["genres"] = df["genres"].apply(get_genres)
     df = df[df["genres"].str.len() > 0]
     print("Efter filmer utan genre:", len(df))
+
+    # filmer som saknar röster får 0
+    df["vote_average"] = pd.to_numeric(df["vote_average"], errors="coerce").fillna(0)
+    df["vote_count"] = pd.to_numeric(df["vote_count"], errors="coerce").fillna(0)
+    df["vote_count"] = df["vote_count"].astype(int)
+    print("Filmer utan röster:", (df["vote_count"] == 0).sum())
 
     return df.reset_index(drop=True)
 
