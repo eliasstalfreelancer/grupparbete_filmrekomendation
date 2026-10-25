@@ -51,6 +51,6 @@ if st.button("Hämta rekommendationer"):
         selected_titles = [titles[movie_id] for movie_id in selected_ids]
         st.success(f"Du valde: {', '.join(selected_titles)}")
 
-        # Recommendations based on the selected movies
+        # Get recommendations based on the selected movies
         recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
         display_recommendations(recommendations)
