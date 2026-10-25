@@ -1,7 +1,10 @@
-from streamlit_searchbox import st_searchbox
 
 import streamlit as st
 import pandas as pd
+from streamlit_searchbox import st_searchbox
+
+from baseline import baseline_recommendation
+from display_results import display_recommendations
 
 st.set_page_config(page_title="Filmrekommendation", page_icon="🎥")
 
@@ -29,6 +32,7 @@ def search_movies(search_term):
 
 st.title("🎥 Filmrekommendation")
 
+# Search fields that shows a dropdown of matching movie titles when the user types
 movie1 = st_searchbox(search_movies, key="movie1", placeholder="Sök film")
 movie2 = st_searchbox(search_movies, key="movie2", placeholder="Sök film")
 movie3 = st_searchbox(search_movies, key="movie3", placeholder="Sök film")
@@ -47,6 +51,6 @@ if st.button("Hämta rekommendationer"):
         selected_titles = [titles[movie_id] for movie_id in selected_ids]
         st.success(f"Du valde: {', '.join(selected_titles)}")
 
-#        Lägga till efter jag har importerat baseline: 
-#        recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
-#        st.dataframe(recommendations[["title", "cosine_score"]])
+        # Get recommendations based on the selected movies
+        recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
+        display_recommendations(recommendations)
