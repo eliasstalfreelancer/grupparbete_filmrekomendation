@@ -13,6 +13,34 @@ def calculate_similarity_scores(df, user_profile, genre_columns):
     # Compare the user profile to each movie and return the similarity scores
     return cosine_similarity(profile, movie_vectors)[0]
 
+
+def calculate_feature_similarity_scores(
+    movie_matrix,
+    user_profile
+):
+    """
+    Calculate cosine similarity between the main model
+    user profile and all movie feature vectors.
+
+    Both movie_matrix and user_profile may be sparse matrices.
+
+    movie_matrix:
+        movies x features
+
+    user_profile:
+        1 x features
+
+    Returns:
+        One similarity score per movie.
+    """
+
+    scores = cosine_similarity(
+        user_profile,
+        movie_matrix
+    )[0]
+
+    return scores
+
 def rank_movies(df, scores, n=None):
     """
     Rank movies based on similarity scores.

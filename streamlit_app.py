@@ -5,17 +5,37 @@ from streamlit_searchbox import st_searchbox
 
 from baseline import baseline_recommendation
 from display_results import display_recommendations
+from model import build_main_model, recommend_movies
 
 st.set_page_config(page_title="Filmrekommendation", page_icon="🎥")
 
 @st.cache_data
 def load_clean_movies():
+    """
+    Loads the cleaned movie data from a CSV file and makes genres into lists and adds keywords.
+    """
     df = pd.read_csv("Kaggle_Movie_Data/movies_clean.csv")
     df["genre"] = df["genres"].str.split("|")
+
+    # Add keywords for main model
+    keywords = pd.read_csv("Kaggle_Movie_Data/keywords.csv")
+    keywords = keywords.drop_duplicates(subset=["id"])     # Drop duplicates based on 'id' to avoid multiple keyword entries for the same movie
+    df = df.merge(keywords, on="id", how="left") 
+    df["keywords"] = df["keywords"].fillna("[]")    # Convert NaN to empty list
 
     return df
 
 movies_df = load_clean_movies()
+
+@st.cache_resource
+def load_main_model():
+    """
+    Loads the main recommendation model once, so it doesn't have to be loaded every time the user requests recommendations.
+    """
+    return build_main_model(movies_df[["id", "title", "genre", "keywords"]])
+
+
+
 titles = dict(zip(movies_df["id"], movies_df["title"]))
 
 
@@ -40,6 +60,8 @@ movie4 = st_searchbox(search_movies, key="movie4", placeholder="Sök film")
 movie5 = st_searchbox(search_movies, key="movie5", placeholder="Sök film")
 
 
+model_choice = st.sidebar.radio("Välj rekommendationsmodell", ["Baseline (genre)", "Huvudmodell (genre + keywords)"], horizontal=True,)
+
 if st.button("Hämta rekommendationer"):
     selected_ids = [movie1, movie2, movie3, movie4, movie5]
 
@@ -51,6 +73,11 @@ if st.button("Hämta rekommendationer"):
         selected_titles = [titles[movie_id] for movie_id in selected_ids]
         st.success(f"Du valde: {', '.join(selected_titles)}")
 
-        # Get recommendations based on the selected movies
-        recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
+        if model_choice == "Baseline (genre)":
+            recommendations = baseline_recommendation(movies_df[["id", "title", "genre"]], selected_ids, n=10)
+
+        else:
+            model = load_main_model()
+            recommendations = recommend_movies(model, selected_ids, n=10)
+        
         display_recommendations(recommendations)
