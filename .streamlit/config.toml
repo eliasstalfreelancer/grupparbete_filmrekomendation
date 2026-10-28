@@ -1,0 +1,11 @@
+[theme]
+primaryColor="#0057B8"
+backgroundColor="#F0F4FA"
+secondaryBackgroundColor="#FFFFFF"
+textColor="#003F7D"
+font="sans serif"
+
+[theme.gradient]
+base="#F0F4FA"
+to="#D6E4F5"
+direction="vertical"
