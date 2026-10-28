@@ -78,6 +78,10 @@ if st.button("Hämta rekommendationer"):
 
         else:
             model = load_main_model()
-            recommendations = recommend_movies(model, selected_ids, n=10)
+            recommendations = recommend_movies(model, selected_ids, n=len(movies_df))
+
+            # Only keep movies that have keywords, then take the top 10
+            has_keywords = movies_df.loc[movies_df["keywords"] != "[]", "id"]
+            recommendations = recommendations[recommendations["id"].isin(has_keywords)].head(10)
         
         display_recommendations(recommendations)
