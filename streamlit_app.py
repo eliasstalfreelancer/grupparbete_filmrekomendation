@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 from streamlit_searchbox import st_searchbox
@@ -6,6 +5,8 @@ from streamlit_searchbox import st_searchbox
 from baseline import baseline_recommendation
 from display_results import display_recommendations
 from model import build_main_model, recommend_movies
+
+
 
 st.set_page_config(page_title="Filmrekommendation", page_icon="🎥")
 
@@ -38,6 +39,12 @@ def load_main_model():
 
 titles = dict(zip(movies_df["id"], movies_df["title"]))
 
+### Laddar css implementationer ###
+def load_css(path):
+    with open(path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css(".streamlit/styles.css")
 
 def search_movies(search_term):
     """
@@ -50,14 +57,19 @@ def search_movies(search_term):
     return [(row.title, row.id) for row in matches.head(20).itertuples()]
 
 
-st.title("🎥 Filmrekommendation")
-
 # Search fields that shows a dropdown of matching movie titles when the user types
+### Mer styling ###
+st.markdown('<div class="ec-header-main">🎥 Filmrekommendation</div>', unsafe_allow_html=True)
+st.markdown('<div class="ec-subheader">Välj dina filmer</div>', unsafe_allow_html=True)
+
 movie1 = st_searchbox(search_movies, key="movie1", placeholder="Sök film")
 movie2 = st_searchbox(search_movies, key="movie2", placeholder="Sök film")
 movie3 = st_searchbox(search_movies, key="movie3", placeholder="Sök film")
 movie4 = st_searchbox(search_movies, key="movie4", placeholder="Sök film")
 movie5 = st_searchbox(search_movies, key="movie5", placeholder="Sök film")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 model_choice = st.sidebar.radio("Välj rekommendationsmodell", ["Baseline (genre)", "Huvudmodell (genre + keywords)"], horizontal=True,)
@@ -85,3 +97,4 @@ if st.button("Hämta rekommendationer"):
             recommendations = recommendations[recommendations["id"].isin(has_keywords)].head(10)
         
         display_recommendations(recommendations)
+        
