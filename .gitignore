@@ -5,6 +5,9 @@ __pycache__/
 
 Kaggle_Movie_Data/
 EDA.py
+EDA_results.ipynb
+data_cleaning.py
+load_data.py
 
 # C extensions
 *.so
