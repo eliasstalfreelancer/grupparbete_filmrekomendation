@@ -1,0 +1,56 @@
+
+/* Header */
+.ec-header-main {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: #0057B8;
+    margin-bottom: 10px;
+}
+
+/* Subheader */
+.ec-subheader {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    color: #003F7D;
+    margin-bottom: 25px;
+}
+
+/* Sektion runt dropdowns */
+.ec-section {
+    background-color: #FFFFFF;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: auto;
+}
+
+/* Dropdown spacing */
+.stSelectbox {
+    margin-bottom: 15px;
+}
+
+/* Wrapper för knappen */
+.center-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Stil på knappen */
+.stButton>button {
+    background-color: #0057B8;
+    color: white;
+    border-radius: 12px;
+    padding: 16px 28px;
+    font-size: 20px;
+    font-weight: 600;
+    width: 150%;  
+}
+
+.stButton>button:hover {
+    background-color: #003F7D;
+}
+
