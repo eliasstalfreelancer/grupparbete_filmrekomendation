@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 Kaggle_Movie_Data/
+EDA.py
 
 # C extensions
 *.so
