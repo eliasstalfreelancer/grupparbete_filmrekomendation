@@ -52,7 +52,7 @@ def evaluate(movies, liked):
         selected = user_movies[:5]     # The 5 movies the user chooses
         hidden = user_movies[5:]       # Rest of movies are hidden
 
-        main_recs = recommend_movies(model, selected, n=100)
+        main_recs = recommend_movies(model, selected, n=len(movies))
         main_recs = main_recs[main_recs["id"].isin(has_keywords)].head(10)
 
         recommendations = {
