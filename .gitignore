@@ -3,6 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+Kaggle_Movie_Data/
+EDA.py
+EDA_results.ipynb
+data_cleaning.py
+load_data.py
+
 # C extensions
 *.so
 
@@ -216,3 +222,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+*.csv
+*/Kaggle_Movie_Data
